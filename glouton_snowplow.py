@@ -20,7 +20,7 @@ def greedy_parcours(positions):
     """
     visited_nodes = list()
     current_position = 0
-
+    distance = 0
     while positions:
         if current_position != 0:
             visited_nodes.append(current_position) 
@@ -28,12 +28,38 @@ def greedy_parcours(positions):
         next_node = find_closest(current_position, positions)
         if next_node is None:
             break
+        distance = distance + abs(next_node - current_position)
         current_position = next_node
 
-    pp = pprint.PrettyPrinter(indent=4)
-    pp.pprint(visited_nodes)
-    return visited_nodes
+    return distance
 
 
-if __name__ == '__main__': 
-    greedy_parcours(np.random.normal(0, 1000, 1000).tolist())
+
+def parcours(positions):
+    sorted = list()
+    tmp = list(positions)
+    total_distance = 0
+    current_position = 0
+
+    while(len(tmp) > 1):
+        current_distance = None
+        nearest_position = 0
+        for j in range(len(tmp)):
+            if j != current_position:
+                distance = abs(tmp[j] - tmp[current_position])
+                if current_distance == None or current_distance > distance:
+                    current_distance = distance
+                    nearest_position = tmp[j]
+
+        sorted.append(tmp[current_position])
+        tmp.pop(current_position)
+        current_position = tmp.index(nearest_position)
+        total_distance += current_distance
+
+    return total_distance + abs(positions[0] - tmp[0])
+
+if __name__ == '__main__':
+    
+    houses = np.random.normal(0, 10, 10).tolist()
+    print(parcours(houses))
+    print(greedy_parcours(houses))
