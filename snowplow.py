@@ -1,11 +1,10 @@
-import numpy as np 
-import pprint
+def our_parcours(positions):
+    """ returns a list that route the snowplow 
+        to optimize waiting time
+    """
+    visited_nodes = list()
+    current_position = 0
 
-def parcours(positions):
-    pp = pprint.PrettyPrinter(indent=4)
-    pp.pprint(positions)
-    return list()
 
-
-if __name__ == '__main__': 
-    parcours(np.random.normal(0, 1000, 1000).tolist())
+if __name__ == '__main__':
+    our_parcours(np.random.normal(0, 1000, 1000).tolist())
