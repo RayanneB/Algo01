@@ -60,7 +60,7 @@ def parcours(positions):
             sorted.append(nearest_node)
             tmp.pop(tmp.index(current_node))
             current_node = nearest_node
-    return sorted, distance
+    return distance
 
 
 if __name__ == '__main__':
