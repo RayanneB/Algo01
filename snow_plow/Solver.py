@@ -6,6 +6,7 @@ from numpy.lib.npyio import save
 
 TOTAL_HOUSE_NB = 1000
 NB_OF_ZONES = 10
+
 HOUSE_PER_ZONE = TOTAL_HOUSE_NB / NB_OF_ZONES
 
 # Display full Numpy Array
@@ -16,8 +17,6 @@ class Solver():
     
     def __init__(self):
         pass
-
-
 
     def find_closest(self, current_position, positions):
         """
@@ -48,7 +47,7 @@ class Solver():
             distance = distance + abs(next_node - current_position)
             current_position = next_node
 
-        self.display_result(visited_nodes)
+        return self.display_result(visited_nodes)
         return visited_nodes
 
     @staticmethod
@@ -73,22 +72,40 @@ class Solver():
             for idx, node in enumerate(tree):
                 if idx < limit:
                     weight += abs(tree[idx] - tree[idx + 1])
-
-            self.weight_tree.append(weight)
-        return self.weight_tree.index(min(self.weight_tree))
+            self.weight_tree.append(weight + (abs(self.current_position - tree[0])) )
+        result_idx = self.weight_tree.index(min(self.weight_tree))
+        return result_idx
 
 
         
     def parcourir(self, tree_idx):
 
-        tree_to_browse = self.sorted_matrice[tree_idx]
-        self.original_list.sort(key = lambda x: abs(x-self.current_position))
+        
+        self.sorted_matrice[tree_idx].sort(key = lambda x: abs(x-self.current_position))
+
         #  remove already visited node from the current position to first node of tree_to_browse
-        for elem in tree_to_browse:
-            self.visited_node.append(elem)
-            tree_to_browse.remove(elem)
+        to_reach = self.sorted_matrice[tree_idx][-1]
+        visited = list()
+        for idx, tree in enumerate(self.sorted_matrice):
+            self.sorted_matrice[idx].sort(key = lambda x: abs(x-self.current_position))
+            for node in tree:
+                if to_reach >= node > self.current_position or self.current_position > node >= to_reach:  
+                    visited.append(node)
+            self.sorted_matrice[idx] = [x for x in tree if x not in visited]
+        visited += self.sorted_matrice[tree_idx]
+        self.sorted_matrice[tree_idx] = []
+        self.visited_node += visited
+
+        self.current_position = to_reach
+        for idx, tree in enumerate(self.sorted_matrice):
+            if not tree:
+                del self.sorted_matrice[idx]
+    
+        
             
     def display_result(self, sorted_list):
+        print(len(sorted_list))
+        #pprint(sorted_list)
         waiting_time = list()
         distance = 0
         size = len(sorted_list)
@@ -100,9 +117,7 @@ class Solver():
 
         final_result = sum(waiting_time) / TOTAL_HOUSE_NB
 
-        print(final_result)
-        print(f"90% of this is {(final_result / 10) * 9}\n\n")
-
+        return final_result
 
         
 
@@ -115,7 +130,6 @@ class Solver():
         self.original_list = positions
         self.sorted_matrice = None
         self.weight_tree = list()
-        self.minimum_spanning_tree = list()
     
 
 
@@ -124,10 +138,9 @@ class Solver():
         self.current_position = 0
         
         while self.sorted_matrice: # ITERATE THROUGH EVERY ZONE
+            self.sorted_matrice.sort(key = lambda x: abs(x[0]-self.current_position))
             tree_idx = self.get_smallest_tree()
             self.parcourir(tree_idx)
-            self.sorted_matrice.pop(tree_idx)
-        
-        self.display_result(self.visited_node)
+        return self.display_result(self.visited_node)
         return self.visited_node
 
