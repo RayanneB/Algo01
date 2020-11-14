@@ -47,7 +47,6 @@ class Solver():
             distance = distance + abs(next_node - current_position)
             current_position = next_node
 
-        return self.display_result(visited_nodes)
         return visited_nodes
 
     @staticmethod
@@ -141,6 +140,5 @@ class Solver():
             self.sorted_matrice.sort(key = lambda x: abs(x[0]-self.current_position))
             tree_idx = self.get_smallest_tree()
             self.parcourir(tree_idx)
-        return self.display_result(self.visited_node)
         return self.visited_node
 
